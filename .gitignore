@@ -1,0 +1,11 @@
+# Игнорируем node_modules и сборку
+node_modules/
+build/
+dist/
+
+# Логи
+npm-debug.log*
+yarn-debug.log*
+
+# Переменные окружения
+.env
