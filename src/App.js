@@ -36,12 +36,13 @@ export function App() {
           <Lightformers />
         </Environment>
         
-        <ScrollControls pages={3} damping={0.2}>
+        <ScrollControls pages={10} damping={0.3}>
           <CameraRig />
         </ScrollControls>
       </Canvas>
 
       <OverlayUI />
+
     </div>
   );
 }
@@ -128,18 +129,49 @@ function CameraRig() {
   }, []);
 
   useFrame((state) => {
-    const startPos = new THREE.Vector3(0.3, 0.15, 5);
-    const endPos = new THREE.Vector3(-10, 1, 0.5);
-    
-    // Интерполяция между стартовой и конечной позицией
-    const lerpFactor = scroll.offset; // Значение от 0 до 1
-    state.camera.position.lerpVectors(startPos, endPos, lerpFactor);
+    // Позиции камеры
+    const positions = [
+      new THREE.Vector3(0.3, 0.15, 5), // Start - Side
+      new THREE.Vector3(-10, 1, 0.5), // Front
+      new THREE.Vector3(0.1, 5, 0), // Up
+      new THREE.Vector3(0.1, 7, 0), // Up and Up again
+      new THREE.Vector3(0.3, 0.15, 3.8) // Back to DEFAULT
+    ];
+
+    // Направления, куда должна смотреть камера
+    const lookAtTargets = [
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0.094, 0.1, -0.1), // Micro aligning - interpolation крякнуто :)
+      new THREE.Vector3(0.094, 0.1, -0.1), // Micro aligning again
+      new THREE.Vector3(0, 0, 0) // Back to default
+    ];
+
+    const sections = positions.length - 1; // Количество переходов
+    const sectionIndex = Math.floor(scroll.offset * sections); // Определяем текущий переход (0, 1, 2 и т. д.)
+    const localLerp = (scroll.offset * sections) % 1; // Локальный offset внутри одной секции
+
+    // Интерполяция позиции камеры
+    state.camera.position.lerpVectors(
+      positions[sectionIndex], 
+      positions[Math.min(sectionIndex + 1, positions.length - 1)], 
+      localLerp
+    );
+
+    // Интерполяция поворота камеры (кватернионы)
+    const startQuaternion = new THREE.Quaternion().setFromRotationMatrix(
+      new THREE.Matrix4().lookAt(state.camera.position, lookAtTargets[sectionIndex], new THREE.Vector3(0, 1, 0))
+    );
+
+    const endQuaternion = new THREE.Quaternion().setFromRotationMatrix(
+      new THREE.Matrix4().lookAt(state.camera.position, lookAtTargets[Math.min(sectionIndex + 1, lookAtTargets.length - 1)], new THREE.Vector3(0, 1, 0))
+    );
+
+    state.camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, localLerp);
 
     // Добавляем параллакс-эффект
     state.camera.position.x += (mouse.current.x - state.camera.position.x) * 0.3;
     state.camera.position.y += (mouse.current.y * 0.35 - state.camera.position.y) * 0.15;
-
-    state.camera.lookAt(0, 0, 0);
   });
 
   return <group ref={cameraRef} />;
