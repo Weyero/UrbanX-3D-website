@@ -1,4 +1,5 @@
 @import url('https://rsms.me/inter/inter.css');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Manrope:wght@400;500;700&display=swap');
 
 * {
   box-sizing: border-box;
@@ -21,21 +22,6 @@ html, body {
   min-height: 100vh; /* Минимальная высота на весь экран */
 }
 
-#scrollContainer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto; /* Разрешает прокрутку */
-  scrollbar-width: none; /* Убирает скроллбар */
-  -ms-overflow-style: none;
-}
-
-#scrollContainer::-webkit-scrollbar {
-  display: none;
-}
-
 canvas {
   touch-action: auto; /* Включаем обработку событий прокрутки */
   display: block; /* Убираем лишние отступы */
@@ -49,11 +35,36 @@ body {
   font-family: 'Inter';
 }
 
-a {
-  color: black;
+@keyframes grain-animation {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-1px, 1px); }
+  20% { transform: translate(1px, -1px); }
+  30% { transform: translate(-1px, -1px); }
+  40% { transform: translate(1px, 1px); }
+  50% { transform: translate(-1px, 1px); }
+  60% { transform: translate(1px, -1px); }
+  70% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 1px); }
+  90% { transform: translate(-1px, 1px); }
+  100% { transform: translate(0, 0); }
 }
 
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: url('https://grainy-gradients.vercel.app/noise.png'); /* Можно заменить на свой грейн-текстур */
+  opacity: 0.15; /* Регулируй интенсивность */
+  animation: grain-animation 1s infinite steps(10);
+  z-index: 10000; /* Чтобы было поверх всего */
+}
+
+
 a {
+  color: black;
   pointer-events: all;
   color: white;
   text-decoration: none;
