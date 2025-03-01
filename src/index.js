@@ -16,8 +16,8 @@ rootElement.innerHTML = ''; // Очищаем старый контент
 
 const root = createRoot(rootElement);
 root.render(
-  <>
+  <div id="scrollContainer">
     <App />
     <Overlay />
-  </>
+  </div>
 );

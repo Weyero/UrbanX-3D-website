@@ -14,6 +14,35 @@ body,
   padding: 0;
 }
 
+html, body {
+  overflow-y: auto;
+  overflow: hidden;
+  height: auto; /* Позволяет странице расти, если контента больше */
+  min-height: 100vh; /* Минимальная высота на весь экран */
+}
+
+#scrollContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto; /* Разрешает прокрутку */
+  scrollbar-width: none; /* Убирает скроллбар */
+  -ms-overflow-style: none;
+}
+
+#scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+canvas {
+  touch-action: auto; /* Включаем обработку событий прокрутки */
+  display: block; /* Убираем лишние отступы */
+  width: 100vw;
+  height: 100vh;
+}
+
 body {
   background: black;
   color: white;
@@ -45,6 +74,6 @@ svg {
 
 canvas {
   opacity: 0;
-  touch-action: none;
+  touch-action: auto;
   animation: fade-in 5s ease 0.5s forwards;
 }
