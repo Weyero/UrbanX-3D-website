@@ -108,9 +108,11 @@ function Porsche(props) {
   return <primitive object={scene} {...props} />;
 }
 
+
 function CameraRig() {
   const cameraRef = useRef();
   const mouse = useRef({ x: 0, y: 0 });
+  const scroll = useScroll();
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -126,17 +128,23 @@ function CameraRig() {
   }, []);
 
   useFrame((state) => {
-    if (cameraRef.current) {
-      state.camera.position.set(0.3, 0.15, 5);
+    const startPos = new THREE.Vector3(0.3, 0.15, 5);
+    const endPos = new THREE.Vector3(-10, 1, 0.5);
+    
+    // Интерполяция между стартовой и конечной позицией
+    const lerpFactor = scroll.offset; // Значение от 0 до 1
+    state.camera.position.lerpVectors(startPos, endPos, lerpFactor);
 
-      state.camera.position.x += (mouse.current.x - state.camera.position.x) * 0.3;
-      state.camera.position.y += (mouse.current.y * 0.35 - state.camera.position.y) * 0.15;
-      state.camera.lookAt(0, 0, 0);
-    }
+    // Добавляем параллакс-эффект
+    state.camera.position.x += (mouse.current.x - state.camera.position.x) * 0.3;
+    state.camera.position.y += (mouse.current.y * 0.35 - state.camera.position.y) * 0.15;
+
+    state.camera.lookAt(0, 0, 0);
   });
 
   return <group ref={cameraRef} />;
 }
+
 
 function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
   const group = useRef()
