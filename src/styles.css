@@ -12,9 +12,6 @@ body,
   padding: 0;
 }
 
-// <weight>: Use a value from 100 to 1000
-// <uniquifier>: Use a unique and descriptive class name
-
 .roboto-flex-<uniquifier> {
   font-family: "Roboto Flex", sans-serif;
   font-optical-sizing: auto;
@@ -64,7 +61,6 @@ p, div {
   font-family: "Roboto Flex", sans-serif;
   font-variation-settings: "opsz" 12;
 }
-
 
 svg {
   fill: white;
