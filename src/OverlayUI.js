@@ -31,11 +31,10 @@ export function OverlayUI() {
       const disappearOpacity = 1 - Math.max(0, Math.min((scrollOffset - minDisappear) / (maxDisappear - minDisappear), 1));
       const finalOpacity = Math.min(appearOpacity, disappearOpacity); // Объединяем два эффекта
 
-
-
       group2Refs.current.forEach((el) => {
         if (el) el.style.opacity = finalOpacity.toFixed(2);
       });
+
 
       // Группа 3
       const minAppear3 = 0.36;
@@ -49,6 +48,17 @@ export function OverlayUI() {
       group3Refs.current.forEach((el) => {
         if (el) el.style.opacity = finalOpacity3.toFixed(2);
       });
+
+
+      // Группа 4 (только появление)
+      const minAppear4 = 0.8;
+      const maxAppear4 = 0.92;
+      const appearOpacity4 = Math.max(0, Math.min((scrollOffset - minAppear4) / (maxAppear4 - minAppear4), 1));
+
+      group4Refs.current.forEach((el) => {
+        if (el) el.style.opacity = appearOpacity4.toFixed(2);
+      });
+
 
       requestAnimationFrame(updateOpacity);
     };
@@ -222,6 +232,118 @@ export function OverlayUI() {
               </p>
             </div>
 
+
+
+
+            {/* Текст над кнопкой */}
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -300px)', // Центрируем + сдвигаем вверх
+              textAlign: 'center'
+            }}>
+              {/* Текст над кнопкой */}
+              <p ref={(el) => group4Refs.current[0] = el} style={{
+                fontSize: '16px',
+                fontWeight: '400',
+                color: '#C5C5C5',
+                marginBottom: '10px'
+              }}>
+                DLC контент, кликай
+              </p>
+
+              {/* Кнопка */}
+              <a ref={(el) => group4Refs.current[1] = el} href="https://google.com" target="_blank" rel="noopener noreferrer"
+                style={{ textDecoration: 'none' }}
+              >
+                <button ref={(el) => group4Refs.current[2] = el} style={{
+                  width: '246px',
+                  height: '64px',
+                  backgroundColor: 'white',
+                  color: '#FA570C',
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  border: 'none',
+                  borderRadius: '32px',
+                  cursor: 'pointer'
+                }}>
+                  Бонус!
+                </button>
+              </a>
+            </div>
+
+            <div style={{
+              position: 'absolute',
+              bottom: '95px', 
+              right: '325px',
+              textAlign: 'left'
+            }}>
+              {/* Основной текст */}
+              <p ref={(el) => group4Refs.current[3] = el} style={{ 
+                fontSize: '40px', 
+                fontWeight: '400', 
+                fontFamily: 'Roboto Flex',
+                color: 'white',
+                letterSpacing: '-2px',
+                maxWidth: '600px'
+              }}>
+                Сайт создан в рамках тестового задания для студии Сирена
+              </p>
+
+              {/* Ссылка */}
+              <a ref={(el) => group4Refs.current[4] = el} href="https://t.me/la3dno" target="_blank" rel="noopener noreferrer"
+                style={{ 
+                  fontSize: '16px',
+                  fontWeight: '400',
+                  fontFamily: 'Roboto Flex',
+                  color: '#FA570C',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '10px' /* Отступ между текстом и стрелкой */
+                }}>
+                Ссылка для связи со мной
+                <span ref={(el) => group4Refs.current[5] = el} style={{ fontSize: '18px' }}>↗</span> {/* Стрелка */}
+              </a>
+            </div>
+
+
+            {/* Таблица слева внизу */}
+            <div style={{
+              position: 'absolute',
+              bottom: '80px',
+              left: '80px',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gridTemplateRows: '1fr 1fr',
+              gap: '30px',
+              fontFamily: 'Roboto Flex, sans-serif'
+            }}>
+              {/* Ячейка 1 */}
+              <div>
+                <p ref={(el) => group4Refs.current[6] = el} style={{ fontSize: '16px', color: '#C5C5C5', margin: '0' }}>прототип и референсы</p>
+                <p ref={(el) => group4Refs.current[7] = el} style={{ fontSize: '40px', color: 'white', margin: '0' }}>Figma</p>
+              </div>
+
+              {/* Ячейка 2 */}
+              <div>
+                <p ref={(el) => group4Refs.current[8] = el} style={{ fontSize: '16px', color: '#C5C5C5', margin: '0' }}>3D</p>
+                <p ref={(el) => group4Refs.current[9] = el} style={{ fontSize: '40px', color: 'white', margin: '0' }}>Blender</p>
+              </div>
+
+              {/* Ячейка 3 */}
+              <div>
+                <p ref={(el) => group4Refs.current[10] = el} style={{ fontSize: '16px', color: '#C5C5C5', margin: '0' }}>сборка сайта</p>
+                <p ref={(el) => group4Refs.current[11] = el} style={{ fontSize: '40px', color: 'white', margin: '0' }}>React</p>
+              </div>
+
+              {/* Ячейка 4 */}
+              <div>
+                <p ref={(el) => group4Refs.current[12] = el} style={{ fontSize: '16px', color: '#C5C5C5', margin: '0' }}>3D to Web</p>
+                <p ref={(el) => group4Refs.current[13] = el} style={{ fontSize: '40px', color: 'white', margin: '0' }}>Three JS</p>
+              </div>
+            </div>
 
     </div>
   );

@@ -40,7 +40,7 @@ export function App() {
           <Lightformers />
         </Environment>
         
-        <ScrollControls pages={10} damping={0.3}>
+        <ScrollControls pages={10} damping={0.3} enabled={true}>
           <CameraRig />
           <UrbanXText />
         </ScrollControls>
@@ -196,7 +196,6 @@ function CameraRig() {
 }
 
 
-
 function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
   const group = useRef()
   useFrame((state, delta) => (group.current.position.z += delta * 10) > 24 && (group.current.position.z = -28))
@@ -240,28 +239,39 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
 function UrbanXText() {
   const scroll = useScroll();
   const [opacity, setOpacity] = useState(1);
+  const [fontSize, setFontSize] = useState(8.75);
 
   useFrame(() => {
     if (scroll) {
-    const fadeOut = 1 - Math.min(scroll.offset * 15, 1);
-    setOpacity(fadeOut);
+      const fadeOut = 1 - Math.min(scroll.offset * 15, 1); // Исчезает в начале
+      const fadeIn = Math.min((scroll.offset - 0.85) * 10, 1); // Появляется в конце
+
+      const finalOpacity = scroll.offset > 0.85 ? fadeIn : fadeOut;
+      setOpacity(finalOpacity);
+
+      // Уменьшаем размер текста после 85% скролла (8.75 → 7.85)
+      const newFontSize = scroll.offset > 0.85 
+        ? 8.75 - (scroll.offset - 0.85) * (8.75 - 7.85) * 10
+        : 8.75;
+
+      setFontSize(Math.max(7.85, newFontSize)); // Ограничиваем минимальный размер
     }
   });
 
   return (
     <Text
       position={[-2.2, 1, -5]}
-      fontSize={8.75}
+      fontSize={fontSize} // Динамический размер шрифта
       color="#FA570C"
       font="Roboto Flex, sans-serif"
       maxWidth={100}
       whiteSpace="nowrap"
       fontWeight={400}
-      letterSpacing={-0.04} // -4% letter-spacing
+      letterSpacing={-0.04}
       textAlign="center"
-      opacity={opacity} // Управляем прозрачностью
-      material-opacity={opacity} // <-- добавляем
-      transparent // <-- важно для работы opacity
+      opacity={opacity}
+      material-opacity={opacity}
+      transparent
     >
       URBAN X
     </Text>
