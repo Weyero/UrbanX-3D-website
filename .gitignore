@@ -9,3 +9,4 @@ yarn-debug.log*
 
 # Переменные окружения
 .env
+.vercel

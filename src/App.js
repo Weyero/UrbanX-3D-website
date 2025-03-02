@@ -5,49 +5,67 @@ import { useAnimations } from '@react-three/drei';
 import { PerformanceMonitor, AccumulativeShadows, RandomizedLight, Environment, Lightformer } from '@react-three/drei'
 import { Float, useGLTF, ScrollControls, useScroll, Scroll, Text } from '@react-three/drei'
 import { LayerMaterial, Color, Depth } from 'lamina'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import SplinePage from './SplinePage'; // Импортируем страницу Spline
 
 import './styles.css'; 
 import { OverlayUI } from './OverlayUI';
 
 
 export function App() {
-  
-  const [degraded, setDegraded] = useState(false); // true/false as switch for bg animation
-  const scrollOffsetRef = useRef(0); // Храним значение скролла
+  const [degraded, setDegraded] = useState(false);
+  const scrollOffsetRef = useRef(0);
 
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
-      <Canvas 
-        shadows 
-        style={{ backgroundColor: '#000000' }}
-      >
-        <spotLight position={[0, 15, 0]} angle={0.3} penumbra={1} castShadow intensity={2} shadow-bias={-0.0001} />
-        <ambientLight intensity={0.5} />
+    <Router>
+      <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
+        <Routes>
+          {/* Главная страница с Canvas */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Canvas 
+                  shadows 
+                  style={{ backgroundColor: '#000000', pointerEvents: "auto" }}
+                  onPointerEnter={() => window.focus()}
+                  onWheel={(e) => e.stopPropagation()} 
+                  onTouchMove={(e) => e.stopPropagation()} 
+                >
+                    <spotLight position={[0, 15, 0]} angle={0.3} penumbra={1} castShadow intensity={2} shadow-bias={-0.0001} />
+                    <ambientLight intensity={0.5} />
 
-        <Porsche scale={1} position={[-0.5, -1.15, 0]} rotation={[0, -1.5, 0]} />
-        
-        <AccumulativeShadows position={[0, -1.16, 0]} frames={100} alphaTest={0.9} scale={10}>
-          <RandomizedLight amount={8} radius={10} ambient={0.5} position={[1, 5, -1]} />
-        </AccumulativeShadows>
+                    <Porsche scale={1} position={[-0.5, -1.15, 0]} rotation={[0, -1.5, 0]} />
+                    
+                    <AccumulativeShadows position={[0, -1.16, 0]} frames={100} alphaTest={0.9} scale={10}>
+                      <RandomizedLight amount={8} radius={10} ambient={0.5} position={[1, 5, -1]} />
+                    </AccumulativeShadows>
 
-        {/** PerfMon will detect performance issues */}
-        <PerformanceMonitor onDecline={() => degrade(true)} />
-        
-        {/* Renders contents "live" into a HDRI environment (scene.environment). */}
-        <Environment frames={degraded ? 1 : Infinity} resolution={256} background={false} blur={0}>
+                    {/** PerfMon will detect performance issues */}
+                    <PerformanceMonitor onDecline={() => degrade(true)} />
+                    
+                    {/* Renders contents "live" into a HDRI environment (scene.environment). */}
+                    <Environment frames={degraded ? 1 : Infinity} resolution={256} background={false} blur={0}>
 
-          <color attach="background" args={["#000000"]} />
-          <Lightformers />
-        </Environment>
-        
-        <ScrollControls pages={10} damping={0.3} enabled={true}>
-          <CameraRig />
-          <UrbanXText />
-        </ScrollControls>
-      </Canvas>
-
-      <OverlayUI />
-    </div>
+                      <color attach="background" args={["#000000"]} />
+                      <Lightformers />
+                    </Environment>
+                    
+                    <ScrollControls pages={10} damping={0.25} enabled={true}>
+                      <CameraRig />
+                      <UrbanXText />
+                    </ScrollControls>
+                  </Canvas>
+                <OverlayUI />
+              </>
+            }
+          />
+          
+          {/* Страница Spline */}
+          <Route path="/spline" element={<SplinePage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
@@ -260,7 +278,7 @@ function UrbanXText() {
 
   return (
     <Text
-      position={[-2.2, 1, -5]}
+      position={[-2, 1, -5]}
       fontSize={fontSize} // Динамический размер шрифта
       color="#FA570C"
       font="Roboto Flex, sans-serif"
