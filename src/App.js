@@ -3,14 +3,16 @@ import './styles.css';
 import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { Canvas, applyProps, useFrame } from '@react-three/fiber'
 import { useAnimations } from '@react-three/drei';
-import { PerformanceMonitor, AccumulativeShadows, RandomizedLight, Environment, Lightformer, Float, useGLTF, ScrollControls, useScroll, Scroll } from '@react-three/drei'
+import { PerformanceMonitor, AccumulativeShadows, RandomizedLight, Environment, Lightformer } from '@react-three/drei'
+import { Float, useGLTF, ScrollControls, useScroll, Scroll, Text,  } from '@react-three/drei'
 import { LayerMaterial, Color, Depth } from 'lamina'
-import gsap from 'gsap';
 import { OverlayUI } from './OverlayUI';
 
 
 export function App() {
+  
   const [degraded, setDegraded] = useState(false); // true/false as switch for bg animation
+  
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Canvas 
@@ -38,6 +40,7 @@ export function App() {
         
         <ScrollControls pages={10} damping={0.3}>
           <CameraRig />
+          <UrbanXText />
         </ScrollControls>
       </Canvas>
 
@@ -129,12 +132,14 @@ function CameraRig() {
   }, []);
 
   useFrame((state) => {
+    if (!cameraRef.current) return;
+
     // Позиции камеры
     const positions = [
-      new THREE.Vector3(0.3, 0.15, 5), // Start - Side
-      new THREE.Vector3(-10, 1, 0.5), // Front
-      new THREE.Vector3(0.1, 5, 0), // Up
-      new THREE.Vector3(0.1, 7, 0), // Up and Up again
+      new THREE.Vector3(0.3, 0.15, 5),  // Start - Side
+      new THREE.Vector3(-10, 1, 0.5),   // Front
+      new THREE.Vector3(0, 5, 0),     // Up
+      new THREE.Vector3(0.1, 7, 0),     // Up and Up again
       new THREE.Vector3(0.3, 0.15, 3.8) // Back to DEFAULT
     ];
 
@@ -142,19 +147,30 @@ function CameraRig() {
     const lookAtTargets = [
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0.094, 0.1, -0.1), // Micro aligning - interpolation крякнуто :)
+      new THREE.Vector3(0.5, 0, 0), // Micro aligning
       new THREE.Vector3(0.094, 0.1, -0.1), // Micro aligning again
       new THREE.Vector3(0, 0, 0) // Back to default
     ];
 
-    const sections = positions.length - 1; // Количество переходов
-    const sectionIndex = Math.floor(scroll.offset * sections); // Определяем текущий переход (0, 1, 2 и т. д.)
-    const localLerp = (scroll.offset * sections) % 1; // Локальный offset внутри одной секции
+    const maxIndex = positions.length - 1;
+    const clampedOffset = Math.min(scroll.offset, 1); // Ограничиваем scroll.offset
+    const sectionIndex = Math.min(Math.floor(clampedOffset * maxIndex), maxIndex - 1);
+    const localLerp = Math.min((clampedOffset * maxIndex) % 1, 1); // Защита от выхода за 1
+
+    if (scroll.offset >= 1) {
+    state.camera.position.copy(positions[maxIndex]);
+    state.camera.lookAt(lookAtTargets[maxIndex]);
+    return;
+}
+
+    // Проверяем, что данные существуют
+    if (!positions[sectionIndex] || !positions[sectionIndex + 1]) return;
+    if (!lookAtTargets[sectionIndex] || !lookAtTargets[sectionIndex + 1]) return;
 
     // Интерполяция позиции камеры
     state.camera.position.lerpVectors(
       positions[sectionIndex], 
-      positions[Math.min(sectionIndex + 1, positions.length - 1)], 
+      positions[sectionIndex + 1], 
       localLerp
     );
 
@@ -164,7 +180,7 @@ function CameraRig() {
     );
 
     const endQuaternion = new THREE.Quaternion().setFromRotationMatrix(
-      new THREE.Matrix4().lookAt(state.camera.position, lookAtTargets[Math.min(sectionIndex + 1, lookAtTargets.length - 1)], new THREE.Vector3(0, 1, 0))
+      new THREE.Matrix4().lookAt(state.camera.position, lookAtTargets[sectionIndex + 1], new THREE.Vector3(0, 1, 0))
     );
 
     state.camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, localLerp);
@@ -176,6 +192,7 @@ function CameraRig() {
 
   return <group ref={cameraRef} />;
 }
+
 
 
 function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
@@ -215,4 +232,38 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
       </mesh>
     </>
   )
+}
+
+
+function UrbanXText() {
+  const scroll = useScroll();
+  const [opacity, setOpacity] = useState(1);
+
+  useFrame(() => {
+    if (scroll) {
+    console.log("Scroll offset:", scroll.offset);
+    const fadeOut = 1 - Math.min(scroll.offset * 15, 1);
+    console.log("New opacity:", fadeOut);
+    setOpacity(fadeOut);
+    }
+  });
+
+  return (
+    <Text
+      position={[-2.2, 1, -5]}
+      fontSize={8.75}
+      color="#FA570C"
+      font="Roboto Flex, sans-serif"
+      maxWidth={100}
+      whiteSpace="nowrap"
+      fontWeight={400}
+      letterSpacing={-0.04} // -4% letter-spacing
+      textAlign="center"
+      opacity={opacity} // Управляем прозрачностью
+      material-opacity={opacity} // <-- добавляем
+      transparent // <-- важно для работы opacity
+    >
+      URBAN X
+    </Text>
+  );
 }
