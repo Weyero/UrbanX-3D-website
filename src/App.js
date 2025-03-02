@@ -1,18 +1,20 @@
 import * as THREE from 'three'
-import './styles.css'; 
 import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { Canvas, applyProps, useFrame } from '@react-three/fiber'
 import { useAnimations } from '@react-three/drei';
 import { PerformanceMonitor, AccumulativeShadows, RandomizedLight, Environment, Lightformer } from '@react-three/drei'
-import { Float, useGLTF, ScrollControls, useScroll, Scroll, Text,  } from '@react-three/drei'
+import { Float, useGLTF, ScrollControls, useScroll, Scroll, Text } from '@react-three/drei'
 import { LayerMaterial, Color, Depth } from 'lamina'
+
+import './styles.css'; 
 import { OverlayUI } from './OverlayUI';
 
 
 export function App() {
   
   const [degraded, setDegraded] = useState(false); // true/false as switch for bg animation
-  
+  const scrollOffsetRef = useRef(0); // Храним значение скролла
+
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <Canvas 
@@ -45,7 +47,6 @@ export function App() {
       </Canvas>
 
       <OverlayUI />
-
     </div>
   );
 }
@@ -133,6 +134,7 @@ function CameraRig() {
 
   useFrame((state) => {
     if (!cameraRef.current) return;
+    window.__SCROLL_OFFSET__ = scroll.offset; // глобал
 
     // Позиции камеры
     const positions = [
@@ -241,9 +243,7 @@ function UrbanXText() {
 
   useFrame(() => {
     if (scroll) {
-    console.log("Scroll offset:", scroll.offset);
     const fadeOut = 1 - Math.min(scroll.offset * 15, 1);
-    console.log("New opacity:", fadeOut);
     setOpacity(fadeOut);
     }
   });
