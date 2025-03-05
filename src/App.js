@@ -6,7 +6,7 @@ import { PerformanceMonitor, AccumulativeShadows, RandomizedLight, Environment, 
 import { Float, useGLTF, ScrollControls, useScroll, Scroll, Text } from '@react-three/drei'
 import { LayerMaterial, Color, Depth } from 'lamina'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SplinePage from './SplinePage'; // Импортируем страницу Spline
+import SplinePage from './SplinePage';
 
 import './styles.css'; 
 import { OverlayUI } from './OverlayUI';
@@ -160,7 +160,7 @@ function CameraRig() {
       new THREE.Vector3(-10, 1, 0.5),   // Front
       new THREE.Vector3(0, 5, 0),     // Up
       new THREE.Vector3(0.1, 7, 0),     // Up and Up again
-      new THREE.Vector3(0.3, 0.15, 3.8) // Back to DEFAULT
+      new THREE.Vector3(0.3, 0.15, 5) // Back to DEFAULT
     ];
 
     // Направления, куда должна смотреть камера
@@ -257,7 +257,7 @@ function Lightformers({ positions = [2, 0, 2, 0, 2, 0, 2, 0] }) {
 function UrbanXText() {
   const scroll = useScroll();
   const [opacity, setOpacity] = useState(1);
-  const [fontSize, setFontSize] = useState(8.75);
+  // const [fontSize, setFontSize] = useState(8.75);
 
   useFrame(() => {
     if (scroll) {
@@ -268,18 +268,19 @@ function UrbanXText() {
       setOpacity(finalOpacity);
 
       // Уменьшаем размер текста после 85% скролла (8.75 → 7.85)
-      const newFontSize = scroll.offset > 0.85 
-        ? 8.75 - (scroll.offset - 0.85) * (8.75 - 7.85) * 10
-        : 8.75;
+      // const newFontSize = scroll.offset > 0.85 
+      //  ? 8.75 - (scroll.offset - 0.85) * (8.75 - 7.85) * 10
+      //  : 8.75;
 
-      setFontSize(Math.max(7.85, newFontSize)); // Ограничиваем минимальный размер
+      // setFontSize(Math.max(7.85, newFontSize)); // Ограничиваем минимальный размер
     }
   });
 
   return (
     <Text
       position={[-2, 1, -5]}
-      fontSize={fontSize} // Динамический размер шрифта
+      // fontSize={fontSize} // Динамический размер шрифта
+      fontSize = {8.75}
       color="#FA570C"
       font="Roboto Flex, sans-serif"
       maxWidth={100}

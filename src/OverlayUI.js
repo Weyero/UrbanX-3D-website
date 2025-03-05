@@ -229,39 +229,53 @@ export function OverlayUI() {
           </div>
 
           <div style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            top: '0',
+            left: '0',
+            display: 'flex',
+            flexDirection: 'column',
+            pointerEvents: 'none'
+          }}>
+
+            {/* Верхний левый текст */}
+            <div style={{
               position: 'absolute',
-              top: '-60px',
+              top: '80px', // Уменьшаем отступ сверху
               left: '80px',
               fontFamily: "Roboto Flex",
               fontSize: '120px',
               fontWeight: '400',
               color: '#FA570C',
               textAlign: 'left',
-              maxWidth: '900px',
-              pointerEvents: 'none'
+              maxWidth: '900px'
             }}>
-            <p ref={(el) => group3Refs.current[0] = el} 
-            style={{ lineHeight: '0.85' }}>
-                Разработано для
+              <p ref={(el) => group3Refs.current[0] = el} style={{ lineHeight: '0.85', margin: '0' }}>
+                Разработан
               </p>
             </div>
 
+            {/* Нижний правый текст */}
             <div style={{
               position: 'absolute',
-              bottom: '-60px',
+              bottom: '80px', // Уменьшаем отступ снизу
               right: '80px',
               fontFamily: "Roboto Flex",
               fontSize: '120px',
               fontWeight: '400',
               color: 'white',
-              textAlign: 'left',
-              pointerEvents: 'none'
+              textAlign: 'right',
+              maxWidth: '700px'
             }}>
-              <p ref={(el) => group3Refs.current[1] = el} 
-              style={{ }}>
-                студии Сирена
+              <p ref={(el) => group3Refs.current[1] = el} style={{ margin: '0' }}>
+                для прогресса
               </p>
             </div>
+
+          </div>
+
+
 
 
             <div style={{
@@ -347,7 +361,6 @@ export function OverlayUI() {
 
               {/* Кнопка */}
               <a 
-              onClick={isButtonActive ? () => window.open('/spline', '_blank') : null}
               ref={(el) => group4Refs.current[1] = el} 
                 style={{ 
                   textDecoration: 'none',
@@ -371,15 +384,15 @@ export function OverlayUI() {
                   cursor: isButtonActive ? 'pointer' : 'default',
                   pointerEvents: isButtonActive ? 'auto' : 'none'
                 }}>
-                  Бонус!
+                  Кнопка
                 </button>
               </a>
             </div>
 
             <div style={{
               position: 'absolute',
-              bottom: '95px', 
-              right: '325px',
+              bottom: '80px', 
+              right: '425px',
               textAlign: 'left',
               pointerEvents: 'none'
             }}>
@@ -390,9 +403,9 @@ export function OverlayUI() {
                 fontFamily: 'Roboto Flex',
                 color: 'white',
                 letterSpacing: '-2px',
-                maxWidth: '600px'
+                maxWidth: '400px'
               }}>
-                Сайт создан в рамках тестового задания для студии Сирена
+                Сайт создан в рамках тестового задания
               </p>
 
               {/* Ссылка */}
